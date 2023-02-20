@@ -8,3 +8,5 @@ This has only been tested on Linux. To compile and run (with an example program 
 `cd RowhammerDetector` 
 `make PIN_ROOT=../pin-3.26-98690-g1fc9d60e6-gcc-linux obj-intel64/RowhammerDetector.so`
 `../pin-3.26-98690-g1fc9d60e6-gcc-linux/pin -t obj-intel64/RowhammerDetector.so -- /bin/ls`
+
+To see the results, check out.log.
