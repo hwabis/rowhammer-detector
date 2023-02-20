@@ -1,0 +1,10 @@
+For Rutgers 14:332:446 Hardware and System Security taught by Professor Sheng Wei. 
+
+This is a fun attempt at writing an Intel Pin 
+(https://www.intel.com/content/www/us/en/developer/articles/tool/pin-a-dynamic-binary-instrumentation-tool.html)
+tool to detect hypothetical rowhammer attacks.
+
+This has only been tested on Linux. To compile and run (with an example program /bin/ls):
+`cd RowhammerDetector` 
+`make PIN_ROOT=../pin-3.26-98690-g1fc9d60e6-gcc-linux obj-intel64/RowhammerDetector.so`
+`../pin-3.26-98690-g1fc9d60e6-gcc-linux/pin -t obj-intel64/RowhammerDetector.so -- /bin/ls`
