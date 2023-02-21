@@ -3,41 +3,35 @@
 #include <iostream>
 #include <fstream>
 
+std::map<ADDRINT, std::string> disassemblyMap;
+
 std::ofstream outputFile;
+int memoryWriteCount;
 
-std::map<ADDRINT, std::string> disAssemblyMap;
-int instructionCount;
-
-void ReadsMem(ADDRINT applicationIp, ADDRINT memoryAddressRead, UINT32 memoryReadSize)
+void CountWriteInstruction(ADDRINT instructionAddress, ADDRINT memoryAddressWrote, UINT32 memoryWriteSize)
 {
-    printf("0x%lu %s reads %d bytes of memory at 0x%lu\n",
-           applicationIp, disAssemblyMap[applicationIp].c_str(),
-           memoryReadSize, memoryAddressRead);
-    instructionCount++;
+    printf("%s - writes at 0x%lu - %d bytes\n",
+           disassemblyMap[instructionAddress].c_str(), memoryAddressWrote, memoryWriteSize);
+    memoryWriteCount++;
 }
 
 void Instruction(INS ins, void *v)
 {
-    if (INS_IsMemoryRead(ins))
+    if (INS_IsMemoryWrite(ins))
     {
-        disAssemblyMap[INS_Address(ins)] = INS_Disassemble(ins);
-        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)ReadsMem,
-                       IARG_INST_PTR, // application IP
-                       IARG_MEMORYREAD_EA,
-                       IARG_MEMORYREAD_SIZE,
+        disassemblyMap[INS_Address(ins)] = INS_Disassemble(ins);
+        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)CountWriteInstruction,
+                       IARG_INST_PTR,
+                       IARG_MEMORYWRITE_EA,
+                       IARG_MEMORYWRITE_SIZE,
                        IARG_END);
     }
-
-    // if (INS_IsMemoryWrite(ins))
-    // {
-    //     INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)printInstruction, IARG_PTR, ins, IARG_END);
-    // }
 }
 
 void Fini(INT32 code, void *v)
 {
     outputFile.open("out.log");
-    outputFile << "COUNT: " << instructionCount << "\n";
+    outputFile << "COUNT: " << memoryWriteCount << "\n";
     outputFile.close();
 }
 
