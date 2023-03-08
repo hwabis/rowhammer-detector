@@ -3,15 +3,20 @@
 #include <iostream>
 #include <fstream>
 
-std::map<ADDRINT, std::string> disassemblyMap;
+// #define DEBUG
 
 std::ofstream outputFile;
+std::map<ADDRINT, std::string> disassemblyMap;
+std::map<ADDRINT, int> writeAddressCountMap;
 int memoryWriteCount;
 
 void CountWriteInstruction(ADDRINT instructionAddress, ADDRINT memoryAddressWrote, UINT32 memoryWriteSize)
 {
-    printf("%s - writes at 0x%lu - %d bytes\n",
+#ifdef DEBUG
+    printf("%s - writes at %lu - %d bytes\n",
            disassemblyMap[instructionAddress].c_str(), memoryAddressWrote, memoryWriteSize);
+#endif
+    writeAddressCountMap[memoryAddressWrote]++;
     memoryWriteCount++;
 }
 
@@ -31,7 +36,12 @@ void Instruction(INS ins, void *v)
 void Fini(INT32 code, void *v)
 {
     outputFile.open("out.log");
-    outputFile << "COUNT: " << memoryWriteCount << "\n";
+    outputFile << "Total write instructions: " << memoryWriteCount << "\n\n";
+    // Output all the written addresses and their counts
+    for (auto const &pair : writeAddressCountMap)
+    {
+        outputFile << pair.first << ':' << pair.second << "\n";
+    }
     outputFile.close();
 }
 
