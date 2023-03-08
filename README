@@ -9,4 +9,7 @@ This has only been tested on Linux. To compile and run (with an example program 
 `make PIN_ROOT=../pin-3.26-98690-g1fc9d60e6-gcc-linux obj-intel64/RowhammerDetector.so`
 `../pin-3.26-98690-g1fc9d60e6-gcc-linux/pin -t obj-intel64/RowhammerDetector.so -- /bin/ls`
 
+You will probably want to run it on the test programs, so compile them first such as with `g++ main.cpp`
+then replace /bin/ls to the path of those programs.
+
 To see the results, check out.log.
