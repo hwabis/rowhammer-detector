@@ -9,7 +9,7 @@
 std::ofstream outputFile;
 std::map<ADDRINT, std::string> disassemblyMap;
 std::map<ADDRINT, int> writeAddressCountMap;
-int memoryWriteCount;
+int memoryWriteCount = 0;
 
 void CountWriteInstruction(ADDRINT instructionAddress, ADDRINT memoryAddressWrote, UINT32 memoryWriteSize)
 {
