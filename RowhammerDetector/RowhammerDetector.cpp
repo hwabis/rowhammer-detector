@@ -2,6 +2,7 @@
 #include <map>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 // #define DEBUG
 
@@ -36,12 +37,36 @@ void Instruction(INS ins, void *v)
 void Fini(INT32 code, void *v)
 {
     outputFile.open("out.log");
+
     outputFile << "Total write instructions: " << memoryWriteCount << "\n\n";
     // Output all the written addresses and their counts
     for (auto const &pair : writeAddressCountMap)
     {
         outputFile << pair.first << ':' << pair.second << "\n";
     }
+
+    // Calculate mean of values
+    double meanWritesPerAddress = static_cast<double>(memoryWriteCount) / writeAddressCountMap.size();
+    outputFile << "Mean: " << meanWritesPerAddress << "\n";
+    double distancesFromMeanSquaredSum = 0;
+    for (auto const &pair : writeAddressCountMap)
+    {
+        double distance = pair.second - meanWritesPerAddress;
+        distancesFromMeanSquaredSum += distance * distance;
+    }
+    double standardDeviation = sqrt(distancesFromMeanSquaredSum / writeAddressCountMap.size());
+    outputFile << "Std dev: " << standardDeviation << "\n";
+    // Check if there are any points with z-score higher than the threshold
+    constexpr int zScoreThreshold = 5; // Kinda really arbitrary...
+    for (auto const &pair : writeAddressCountMap)
+    {
+        double zScore = (pair.second - meanWritesPerAddress) / standardDeviation;
+        if (zScore > zScoreThreshold)
+        {
+            outputFile << "Address" << pair.first << " is read " << pair.second << " times with z-score " << zScore << "\n";
+        }
+    }
+
     outputFile.close();
 }
 
