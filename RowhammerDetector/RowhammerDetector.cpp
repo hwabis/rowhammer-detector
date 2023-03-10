@@ -1,3 +1,6 @@
+// This is flawed because you can easily bypass it by writing to every address a lot...
+// Decreases the z-score of the attacked addresses
+
 #include "pin.H"
 #include <map>
 #include <iostream>
@@ -7,7 +10,7 @@
 // #define DEBUG
 
 std::ofstream outputFile;
-std::map<ADDRINT, std::string> disassemblyMap;
+std::map<ADDRINT, std::string> writeDataMap;
 std::map<ADDRINT, int> writeAddressCountMap;
 int memoryWriteCount = 0;
 
@@ -25,7 +28,7 @@ void Instruction(INS ins, void *v)
 {
     if (INS_IsMemoryWrite(ins))
     {
-        disassemblyMap[INS_Address(ins)] = INS_Disassemble(ins);
+        writeDataMap[INS_Address(ins)] = INS_Disassemble(ins);
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)CountWriteInstruction,
                        IARG_INST_PTR,
                        IARG_MEMORYWRITE_EA,
