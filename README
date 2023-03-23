@@ -13,3 +13,5 @@ You will probably want to run it on the test programs, so compile them first wit
 then replace /bin/ls to the path of those programs.
 
 To see the results: `cat out.log`.
+
+(I tested with https://github.com/google/rowhammer-test. Unfortunately the attack program just gets stuck. Lol.)
